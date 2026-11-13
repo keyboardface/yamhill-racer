@@ -18,6 +18,8 @@ from Willamina through the hills to Sheridan (about 10 × 8 km). Runs in the bro
 
 A gamepad works too (right trigger, left trigger, left stick, A for handbrake).
 
+Watch out for the elk: a herd wanders onto the road wherever you are driving, and they are in no hurry to move.
+
 ## How the world is made
 - **Ground** — USGS 3DEP lidar elevation.
 - **Forest** — trees are placed wherever the canopy-height data says trees really are.
