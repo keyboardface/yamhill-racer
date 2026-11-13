@@ -8,6 +8,7 @@ import { createMinimap } from './minimap.js';
 import { createChallenges } from './challenges.js';
 import { createPinGuide } from './pin.js';
 import { Glider } from './glider.js';
+import { createElk } from './elk.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
@@ -56,6 +57,7 @@ const audio = new CarAudio();
 const minimap = await createMinimap();
 const challenges = await createChallenges({ scene, world, car, minimap });
 const pinGuide = createPinGuide({ scene, world, car, minimap, challenges });
+const herd = createElk({ scene, world, car, effects });      // elk that wander onto the road (elk.js)
 document.getElementById('loading').remove();
 
 const gui = new GUI({ title: 'Car tuning (T)' });
@@ -185,7 +187,8 @@ function frame(now) {
   readInput();
   challenges.holdInput(input);
   acc += dt;
-  while (acc >= STEP) { car.savePrev(); car.step(STEP, input); challenges.constrain(); acc -= STEP; }
+  while (acc >= STEP) { car.savePrev(); car.step(STEP, input); herd.collide(); challenges.constrain(); acc -= STEP; }
+  herd.update(dt);
   challenges.update(dt);
   car.interpolate(acc / STEP);          // draw the car between physics steps so motion is smooth
   car.input = input;
@@ -215,5 +218,5 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 // for debugging / automated test drives
-window.game = { scene, sun, effects, setCam: m => { camMode = m; }, teleport: (x, z, cls = 2) => { car.reset(...world.placeOn(x, z, cls)); car.safe = []; }, car, world, input, keys, tuning, camera, renderer, minimap, challenges, pinGuide };
+window.game = { scene, sun, effects, setCam: m => { camMode = m; }, teleport: (x, z, cls = 2) => { car.reset(...world.placeOn(x, z, cls)); car.safe = []; }, car, world, input, keys, tuning, camera, renderer, minimap, challenges, pinGuide, herd };
 window.game.glider = glider;
